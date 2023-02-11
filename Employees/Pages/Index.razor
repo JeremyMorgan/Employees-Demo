@@ -1,0 +1,122 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using Employees.Data
+@page "/"
+@inject IDbContextFactory<EmployeeDataContext> EmployeeDataContextFactory;
+<PageTitle>Our Employees!</PageTitle>
+
+@if (ShowCreate)
+{
+    <h3>Add a New Employee</h3>
+    <div class="row">
+        <label for="FirstName" class="col-4 col-form-label">First Name</label>
+        <div class="col-8">
+            <input id="FirstName" name="FirstName" type="text" class="form-control" @bind="@NewEmployee.FirstName">
+        </div>
+    </div>
+    <div class="row">
+        <label for="LastName" class="col-4 col-form-label">Last Name</label>
+        <div class="col-8">
+            <input id="LastName" name="LastName" type="text" class="form-control" @bind="@NewEmployee.LastName">
+        </div>
+    </div>
+    <div class="row">
+        <label for="Email" class="col-4 col-form-label">Email Address</label>
+        <div class="col-8">
+            <input id="Email" name="Email" type="text" class="form-control" @bind="@NewEmployee.Email">
+        </div>
+    </div>
+    <div class="row">
+        <label for="Department" class="col-4 col-form-label">Department</label>
+        <div class="col-8">
+            <input id="Department" name="Department" type="text" class="form-control" @bind="@NewEmployee.Department">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Avatar" class="col-4 col-form-label">Avatar</label>
+        <div class="col-8">
+            <input id="Avatar" name="Avatar" type="text" class="form-control" @bind="@NewEmployee.Avatar">
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="offset-4 col-8">
+            <button name="submit" type="submit" class="btn btn-primary" @onclick="CreateNewEmployee">Submit</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="form-group row">
+        <div class="offset-4 col-8">
+            <button name="submit" type="submit" class="btn btn-primary" @onclick="ShowCreateForm">Add a New Employee</button>
+        </div>
+    </div>
+
+    @if (@OurEmployees is not null && @OurEmployees.Count > 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered table-light border-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Picture</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in OurEmployees)
+                    {
+                        @if (!@ShowEdit)
+                        {
+                            <tr>
+                                <th scope="row">@employee.Id</th>
+                                <td>@employee.FirstName</td>
+                                <td>@employee.LastName</td>
+                                <td>@employee.Email</td>
+                                <td>@employee.Department</td>
+                                <td><img src="@employee.Avatar" width="50" height="50" /></td>
+                                <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(employee)">Edit</button></td>
+                                <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => DeleteEmployee(employee)">Delete</button></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            if (@EmployeeToUpdate is not null && @EmployeeToUpdate.Id == @employee.Id)
+                            {
+                                <tr>
+                                    <th scope="row">@employee.Id</th>
+                                    <td><input id="FirstName" name="FirstName" type="text" class="form-control" @bind="@EmployeeToUpdate.FirstName" /></td>
+                                    <td><input id="LastName" name="LastName" type="text" class="form-control" @bind="@EmployeeToUpdate.LastName" /></td>
+                                    <td><input id="Email" name="Email" type="text" class="form-control" @bind="@EmployeeToUpdate.Email" /></td>
+                                    <td><input id="Department" name="Department" type="text" class="form-control" @bind="@EmployeeToUpdate.Department" /></td>
+                                    <td><input id="Avatar" name="Avatar" type="text" class="form-control" @bind="@EmployeeToUpdate.Avatar" /></td>
+                                    <td><button name="submit" type="submit" class="btn btn-primary" @onclick="@UpdateEmployee">Save</button></td>
+                                    <td></td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <th scope="row">@employee.Id</th>
+                                    <td>@employee.FirstName</td>
+                                    <td>@employee.LastName</td>
+                                    <td>@employee.Email</td>
+                                    <td>@employee.Department</td>
+                                    <td><img src="@employee.Avatar" width="50" height="50" /></td>
+                                    <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(employee)">Edit</button></td>
+                                    <td></td>
+                                </tr>
+                            }
+
+                        }
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
